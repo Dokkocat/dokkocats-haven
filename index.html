@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokkos Corner</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a; /* Dark gray */
+            color: #e0e0e0; /* Light gray text */
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light-mode {
+            background-color: #f0f0f0; /* Light gray */
+            color: #333; /* Dark gray text */
+        }
+
+        a {
+            color: #4aa3a3; /* Muted teal */
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #8a6d8b; /* Muted purple */
+            text-decoration: underline;
+        }
+
+        /* Particle Background */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5; /* Subtle particle effect */
+        }
+
+        /* Header */
+        header {
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .letter-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .letter-title img {
+            image-rendering: pixelated;
+            width: 40px;
+            height: auto;
+            filter: drop-shadow(0 0 5px #4aa3a3); /* Muted glow */
+        }
+
+        header p {
+            font-size: 1.5em;
+            color: #8a6d8b; /* Muted purple */
+            text-shadow: 0 0 10px rgba(138, 109, 139, 0.8); /* Glow effect */
+            animation: flicker 1.5s infinite alternate; /* Flickering effect */
+        }
+
+        /* Navigation Bar */
+        .nav {
+            display: flex;
+            justify-content: center;
+            background-color: rgba(26, 26, 26, 0.9);
+            padding: 10px 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            transition: background-color 0.3s;
+        }
+
+        body.light-mode .nav {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        .nav a {
+            color: #4aa3a3;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: #8a6d8b;
+            text-shadow: 0 0 10px rgba(138, 109, 139, 0.5);
+        }
+
+        /* Sections */
+        .section {
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: rgba(26, 26, 26, 0.8);
+            border: 2px solid #4aa3a3;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(74, 163, 163, 0.3);
+            position: relative;
+            z-index: 1;
+            animation: borderFlicker 2s infinite alternate; /* Flickering border */
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        body.light-mode .section {
+            background-color: rgba(240, 240, 240, 0.8);
+            border-color: #8a6d8b;
+            box-shadow: 0 0 20px rgba(138, 109, 139, 0.3);
+        }
+
+        .section h2 {
+            font-size: 2.5em;
+            color: #8a6d8b;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(138, 109, 139, 0.5);
+            animation: flicker 1.5s infinite alternate; /* Flickering effect */
+        }
+
+        .section p {
+            font-size: 1.2em;
+            color: inherit;
+        }
+
+        .section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .section ul li {
+            font-size: 1.2em;
+            color: inherit;
+            margin: 10px 0;
+        }
+
+        /* Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .gallery img {
+            width: 100%;
+            border: 2px solid #4aa3a3;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(26, 26, 26, 0.9);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        body.light-mode footer {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        footer p {
+            color: #4aa3a3;
+        }
+
+        footer a {
+            color: #8a6d8b;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #4aa3a3;
+        }
+
+        /* Toggle Button */
+        .toggle-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .toggle-button img {
+            width: 40px;
+            height: auto;
+            filter: drop-shadow(0 0 5px #4aa3a3);
+            transition: filter 0.3s;
+        }
+
+        .toggle-button:hover img {
+            filter: drop-shadow(0 0 5px #8a6d8b);
+        }
+
+        /* Neon Glow Effects */
+        .neon {
+            text-shadow: 0 0 5px #4aa3a3, 0 0 10px #4aa3a3, 0 0 20px #4aa3a3;
+        }
+
+        .neon-purple {
+            text-shadow: 0 0 5px #8a6d8b, 0 0 10px #8a6d8b, 0 0 20px #8a6d8b;
+        }
+
+        /* Flickering Animations */
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                opacity: 1;
+                text-shadow: 0 0 10px rgba(138, 109, 139, 0.8);
+            }
+            20%, 24%, 55% {
+                opacity: 0.8;
+                text-shadow: 0 0 5px rgba(138, 109, 139, 0.5);
+            }
+        }
+
+        @keyframes borderFlicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                border-color: #4aa3a3;
+                box-shadow: 0 0 20px rgba(74, 163, 163, 0.3);
+            }
+            20%, 24%, 55% {
+                border-color: #8a6d8b;
+                box-shadow: 0 0 20px rgba(138, 109, 139, 0.3);
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+
+    <!-- Toggle Button -->
+    <button class="toggle-button" id="toggleButton">
+        <img src="lightswitch.png" alt="Toggle Light Mode">
+    </button>
+
+    <div class="nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="projects.html">Projects</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="anime.html">Anime</a>
+    </div>
+
+    <header id="home">
+        <div class="letter-title">
+            <img src="D.png" alt="D">
+            <img src="O.png" alt="O">
+            <img src="K.png" alt="K">
+            <img src="K.png" alt="K">
+            <img src="O.png" alt="O">
+            <img src="C.png" alt="C">
+            <img src="A.png" alt="A">
+            <img src="T.png" alt="T">
+        </div>
+        <p class="neon-purple">The one and only, Dokkocat</p>
+    </header>
+
+    <section class="section" id="about">
+        <h2 class="neon-purple">About Me</h2>
+        <p>Hello! I'm dokkocat, a passionate software developer who loves creating cool things with code. I specialize in web development, game development, and digital art. On Twitter and GitHub, I share insights on tech, open-source contributions, and my latest projects!</p>
+        <ul>
+            <li>I’m from Canada.</li>
+            <li>My main programming language is Lua, but I also know C/C#.</li>
+            <li>I love finding little errors in things and fixing them.</li>
+            <li>I’m an avid fan of anime. Ask me about it some time!</li>
+            <li>I spend most of my time coding, drawing, and chatting on Discord.</li>
+        </ul>
+    </section>
+
+    <section class="section" id="projects">
+        <h2 class="neon-purple">Projects</h2>
+        <ul>
+            <li><a href="https://ickkystickky.itch.io/hook-on-a-fish">Hook on a fish</a> - A demo game which is in progress about killing demons and fishing.</li>
+            <li><a href="https://github.com/merutedokkusu/Python-Launcher">Python Game Launcher</a> - Take a guess (unfinished/scrapped).</li>
+            <li><a href="lost.html">Project ?</a> - A Portuguese typing game which is still in progress.</li>
+            <li><a href="#">?</a> - Get your own Merchandise of hook on a fish! (very little good stuff for now).</li>
+        </ul>
+    </section>
+
+    <section class="section" id="gallery">
+        <h2 class="neon-purple">Gallery</h2>
+        <div class="gallery">
+            <img src="bbbc82d31d79bd9382b3472bf75c348e.jpg" alt="Image 1">
+            <img src="GhnoKtPWgAAYE2M.png" alt="Image 2">
+            <img src="Ga1vD6kXsAQburY.png" alt="Image 3">
+            <img src="tamm-cat.png" alt="Image 4">
+        </div>
+    </section>
+
+    <section class="section" id="guestbook">
+        <h2 class="neon-purple">Guestbook</h2>
+        <p>Leave a comment or say hello!</p>
+        <form>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="comment">Comment:</label>
+            <textarea id="comment" name="comment" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 dokkocat. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Particle System
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1 + 0.5; // Smaller particle size
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.opacity = Math.random() * 0.5 + 0.5; // Random opacity for flickering
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+                this.opacity = Math.random() * 0.5 + 0.5; // Flickering effect
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(74, 163, 163, ${this.opacity})`; // Muted teal particles with flickering
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            for (let i = 0; i < 100; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            ctx.scale(dpr, dpr);
+            init();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); // Initialize canvas size on load
+
+        init();
+        animate();
+
+        // Light/Dark Mode Toggle
+        const toggleButton = document.getElementById('toggleButton');
+        const body = document.body;
+
+        toggleButton.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+        });
+    </script>
+
+<script>
+    // Function to check if the page exists
+    function checkPageExists(url) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('HEAD', url, false); // Synchronous request
+        try {
+            xhr.send();
+            return xhr.status === 200; // Returns true if the page exists
+        } catch (e) {
+            return false; // Return false if there was an error
+        }
+    }
+
+    // Add event listeners to the navigation links
+    const links = document.querySelectorAll('.nav a');
+
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = link.getAttribute('href');
+            if (!checkPageExists(href)) {
+                // If page does not exist, redirect to the error page
+                e.preventDefault();
+                window.location.href = 'error.html';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost?????????????????????????</title>
+    <style>
+        body {
+            background-color: black;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+        img {
+            cursor: pointer;
+            max-width: 80%;
+            height: auto;
+            image-rendering: pixelated; /* Disable antialiasing for pixelated image */
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <img src="guy.png" alt="Lost Image" id="clickImage">
+    <audio id="audio" src="lost.mp3" preload="auto" loop>
+        <p>If you are reading this, it is because your browser does not support the audio element.</p>
+        <embed src="lost.mp3" width="180" height="90" hidden="true" />
+    </audio>
+
+    <script>
+        const image = document.getElementById('clickImage');
+        const audio = document.getElementById('audio');
+
+        // Initial position of the image
+        let xPos = 50;
+        let yPos = 50;
+
+        // Movement speed
+        const speed = 10;
+
+        // Function to update image position based on key press
+        function moveImage(event) {
+            const key = event.key; // Get the key that was pressed
+
+            // Move image based on key press (W, A, S, D for up, left, down, right)
+            switch (key) {
+                case 'w': // Move up
+                    yPos -= speed;
+                    break;
+                case 'a': // Move left
+                    xPos -= speed;
+                    break;
+                case 's': // Move down
+                    yPos += speed;
+                    break;
+                case 'd': // Move right
+                    xPos += speed;
+                    break;
+                default:
+                    return; // Ignore other keys
+            }
+
+            // Update the position of the image
+            image.style.left = `${xPos}px`;
+            image.style.top = `${yPos}px`;
+        }
+
+        // Function to handle the movement and delay before playing audio
+        function handleClick() {
+            // Move the image for 2 seconds
+            setTimeout(() => {
+                // Play the audio after 2 seconds
+                audio.play().catch(function(error) {
+                    console.log('Audio play error:', error);
+                });
+            }, 2000); // Delay the audio for 2 seconds
+
+            // Listen for the keydown event to move the image
+            document.addEventListener('keydown', moveImage);
+        }
+
+        // Add click event to start moving the image and play the audio after 2 seconds
+        image.addEventListener('click', handleClick);
+    </script>
+</body>
+</html>

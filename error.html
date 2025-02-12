@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oops! Something Went Wrong</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .error-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        ol {
+            list-style-type: decimal;
+            margin: 20px 0;
+        }
+
+        li {
+            font-size: 16px;
+            margin: 8px 0;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        em {
+            font-style: italic;
+            color: #e74c3c;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #ipInfo {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>Oops! Something Went Wrong...</h1>
+        <p>Looks like we’ve hit a digital pothole, and the page you’re looking for is nowhere to be found.</p>
+        <p>But don't worry, we’re on it! In the meantime, here are some things you can do:</p>
+        <ol>
+            <li><strong>Take a deep breath</strong> – It’s going to be okay. Maybe.</li>
+            <li><strong>Visit the homepage</strong> – Or check out our <a href="index.html">fantastic page here</a>.</li>
+            <li><strong>Enjoy a random fact:</strong> <span id="randomFact"></span></li>
+        </ol>
+        <p>If you still can't find what you're looking for, try <a href="mailto:dokkocat0x@gmail.com">contacting us</a>, or simply throw your device into the air and scream. <em>(Note: This may not actually help.)</em></p>
+        <button onclick="window.location.href='index.html'">Go Back to Homepage</button>
+
+        <!-- IP address display area -->
+        <div id="ipInfo">Your IP address: <span id="userIP">Loading...</span></div>
+    </div>
+
+    <script>
+        // Array of random facts
+        const facts = [
+            "Did you know cats sleep 70% of their lives? They’re living the dream.",
+            "A group of flamingos is called a 'flamboyance'.",
+            "Octopuses have three hearts and blue blood.",
+            "Bananas are berries, but strawberries are not.",
+            "The Eiffel Tower can be 15 cm taller during the summer due to the expansion of iron.",
+            "Honey never spoils – archaeologists have found pots of honey in ancient tombs that are over 3000 years old.",
+            "Sloths only poop once a week!",
+            "Wombat poop is cube-shaped.",
+            "Cows have best friends and get stressed when they are separated.",
+            "Sharks existed before trees."
+        ];
+
+        // Function to get a random fact
+        function getRandomFact() {
+            const randomIndex = Math.floor(Math.random() * facts.length);
+            return facts[randomIndex];
+        }
+
+        // Display a random fact in the HTML
+        document.getElementById('randomFact').textContent = getRandomFact();
+
+        // Fetch user's IP address and display it
+        fetch('https://ipinfo.io/json?token=0dfb9080d26ee2') // Replace YOUR_API_TOKEN with your ipinfo.io API token
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('userIP').textContent = data.ip;
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
+                document.getElementById('userIP').textContent = 'Unable to retrieve IP.';
+            });
+    </script>
+</body>
+</html>
